@@ -1,11 +1,11 @@
 import networkx as nx
 from parse import read_input_file, write_output_file
-from utils import is_valid_solution, calculate_happiness
+from utils import is_valid_solution, calculate_happiness, convert_dictionary
 import sys
+import pandas as pd
+import numpy as np
+import random
 
-G, s = read_input_file('/Users/sreevidyaganga/Desktop/project-fa20-skeleton-master/inputs/small-1.in')
-# print(G[2][0]['stress'])
-print(G.degree[0])
 
 
 def solve(G, s):
@@ -22,32 +22,75 @@ def solve(G, s):
     pass
     
 
-def greedy(G, s):
-    sorted_happiness = [G[x][y] for ] 
-    for i in range(len(G.nodes)):
-        stress = s/i
+# def greedy(G, s):
+#     sorted_happiness = [G[x][y] for ] 
+#     for i in range(len(G.nodes)):
+#         stress = s/i
+
+# def clearGraph(G, s):
+#     edges = list(G.edges)
+#     i = 0
+#     while i < len(edges):
+#         element = edges[i]
+#         if (element['stress'] > s):
+#             del element
 
 def kcluster(G, s):
-    i = 1
     best = {}
-    while i < len(G.nodes):
-        result = {}
-        for j in range(i):
-            result[j] = []
-        cc = 0
-
-        budget = s/i
+    best_happiness= 0 
+    for i in range(1, len(G.nodes)):
+        local_best = {}
+        for j in range(0, 400):
+            init_centroids = random.sample(range(0, len(list(G.nodes))), i)
+            # centroids = [G.nodes[j] for j in init_centroids]
+            classes = making_classes(init_centroids, G)
+            d = making_dic(classes)
+            dic = convert_dictionary(d)
+            if is_valid_solution(dic, G, s, i):
+                local_best[calculate_happiness(dic, G)] = dic 
+            if len(local_best)!=0:
+                local = max(local_best.keys())
+                if len(best)!=0:
+                    if best_happiness < local:
+                        best_happiness = local 
+                        best = local_best[local]
+                else:
+                   best_happiness = local
+                   best = local_best[local]
+    h = calculate_happiness(best, G)
+    print("Total Happiness: {}".format(calculate_happiness(best, G)))
+    return best
         
-        i += 1
 
 
-def clearGraph(G, s):
-    edges = list(G.edges)
-    i = 0
-    while i < len(edges):
-        element = edges[i]
-        if (element['stress'] > s):
-            del element
+def making_classes(centroids, G):
+    clas= [[c] for c in centroids]
+    rv = [[G.nodes[c]] for c in centroids] 
+    x = list(G.nodes)
+    for node in list(G.nodes):
+        if not any([(node in already) for already in clas]):
+            added_stress = []
+            for existing in range(len(centroids)):
+                total = 0 
+                for stud in clas[existing]:
+                    total+= G[stud][node]['stress'] 
+                added_stress.append(total)
+            clas[np.argmin(added_stress)].append(node)
+            rv[np.argmin(added_stress)].append(G.nodes[node])
+    return clas
+    
+
+def making_dic(biglist):
+    dic = {}
+    for b in range(len(biglist)):
+        dic[b]= biglist[b]
+    return dic 
+
+G, s = read_input_file('/Users/sreevidyaganga/Desktop/50.in')
+# print(G[2][0]['stress'])
+x = kcluster(G, s)
+
+
 
 
 # Here's an example of how to run your solver.

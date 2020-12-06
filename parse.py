@@ -9,21 +9,22 @@ import utils
 def validate_file(path):
     """File must not exceed 100KB and must contain only numbers and spaces"""
     if os.path.getsize(path) > 100000:
-        print(f"{path} exceeds 100KB, make sure you're not repeating edges!")
+        # print(f"{path} exceeds 100KB, make sure you're not repeating edges!")
+        print("exceeds 100KB, make sure you're not repeating edges!")
         return False
     with open(path, "r") as f:
         if not re.match(r"^[\d\.\s]+$", f.read()):
-            print(f"{path} contains characters that are not numbers and spaces")
+            print("contains characters that are not numbers and spaces")
             return False
     return True
+
 
 def read_input_file(path, max_size=None):
     """
     Parses and validates an input file
-
     :param path: str, a path
     :param max_size: int, number of max add_nodes_from
-    :return: networkx Graph if the input is well formed, AssertionError thrown otherwise
+    :return: networkx Graph is the input is well formed, AssertionError thrown otherwise
     """
     with open(path, "r") as fo:
         n = fo.readline().strip()
@@ -59,10 +60,9 @@ def read_input_file(path, max_size=None):
 
         if max_size is not None:
             assert len(G) <= max_size
+
         return G, stress_budget
 
-x = read_input_file('/Users/sreevidyaganga/Desktop/project-fa20-skeleton-master/inputs/small-1.in')
-print(x)
 
 def write_input_file(G, stress_budget, path):
     with open(path, "w") as fo:
@@ -78,7 +78,6 @@ def write_input_file(G, stress_budget, path):
 def read_output_file(path, G, s):
     """
     Parses and validates an output file
-
     :param path: str, a path
     :param G: the input graph corresponding to this output
     :return: networkx Graph is the output is well formed, AssertionError thrown otherwise
@@ -114,7 +113,6 @@ def read_output_file(path, G, s):
 def write_output_file(D, path):
     """
     Writes a mapping to an output file
-
     :param path: str, a path
     :param D: dict, a mapping
     :return: None -- creates a text file
