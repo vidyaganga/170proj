@@ -35,7 +35,7 @@ def solve(G, s):
 #         if (element['stress'] > s):
 #             del element
 
-def kcluster(G, s):
+def kcluster_stress(G, s):
     best = {}
     best_happiness= 0 
     for i in range(1, len(G.nodes)):
@@ -43,7 +43,7 @@ def kcluster(G, s):
         for j in range(0, 400):
             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
             # centroids = [G.nodes[j] for j in init_centroids]
-            classes = making_classes(init_centroids, G)
+            classes = making_classes_stress(init_centroids, G)
             d = making_dic(classes)
             dic = convert_dictionary(d)
             if is_valid_solution(dic, G, s, i):
@@ -63,11 +63,10 @@ def kcluster(G, s):
         
 
 
-def making_classes(centroids, G):
-    clas= [[c] for c in centroids]
-    rv = [[G.nodes[c]] for c in centroids] 
-    x = list(G.nodes)
-    for node in list(G.nodes):
+def making_classes_stress(centroids, G):
+    clas= [[c] for c in centroids] 
+    x = random.sample(range(0, len(list(G.nodes))), len(G.nodes))
+    for node in x:
         if not any([(node in already) for already in clas]):
             added_stress = []
             for existing in range(len(centroids)):
@@ -75,10 +74,64 @@ def making_classes(centroids, G):
                 for stud in clas[existing]:
                     total+= G[stud][node]['stress'] 
                 added_stress.append(total)
-            clas[np.argmin(added_stress)].append(node)
-            rv[np.argmin(added_stress)].append(G.nodes[node])
+            clas[np.argmin(added_stress)].append(node)    
     return clas
     
+
+def kcluster_happy(G, s):
+    best = {}
+    best_happiness= 0 
+    for i in range(1, len(G.nodes)):
+        local_best = {}
+        for j in range(0, 200):
+            init_centroids = random.sample(range(0, len(list(G.nodes))), i)
+            # centroids = [G.nodes[j] for j in init_centroids]
+            classes = making_classes_happy(init_centroids, G)
+            d = making_dic(classes)
+            dic = convert_dictionary(d)
+            if is_valid_solution(dic, G, s, i):
+                local_best[calculate_happiness(dic, G)] = dic 
+            if len(local_best)!=0:
+                local = max(local_best.keys())
+                if len(best)!=0:
+                    if best_happiness < local:
+                        best_happiness = local 
+                        best = local_best[local]
+                else:
+                   best_happiness = local
+                   best = local_best[local]
+    h = calculate_happiness(best, G)
+    print("Total Happiness: {}".format(calculate_happiness(best, G)))
+    return best
+        
+
+
+def making_classes_happy(centroids, G):
+    clas= [[c] for c in centroids] 
+    x = random.sample(range(0, len(list(G.nodes))), len(G.nodes))
+    for node in x:
+        if not any([(node in already) for already in clas]):
+            added_stress = []
+            added_hs = []
+            for existing in range(len(centroids)):
+                total_hs = 0 
+                total_stress = 0
+                for stud in clas[existing]:
+                    total_hs += G[stud][node]['happiness'] / G[stud][node]['stress']
+                    total_stress +=  G[stud][node]['stress']
+                added_stress.append(total_stress)
+                added_hs.append(total_hs)
+            clas[np.argmax(added_hs)].append(node)    
+            # if (np.argmin(added_stress) == np.argmax(added_hs)):
+            #     clas[np.argmax(added_stress)].append(node)    
+            # else: 
+            #     rando = [np.argmin(added_stress), np.argmax(added_hs)]
+            #     x = random.randint(0, 1)
+            #     clas[rando[x]].append(node)  
+    return clas
+    
+
+
 
 def making_dic(biglist):
     dic = {}
@@ -88,7 +141,7 @@ def making_dic(biglist):
 
 G, s = read_input_file('/Users/sreevidyaganga/Desktop/50.in')
 # print(G[2][0]['stress'])
-x = kcluster(G, s)
+x = kcluster_happy(G, s)
 
 
 
