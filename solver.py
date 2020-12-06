@@ -83,13 +83,18 @@ def kcluster_happy(G, s):
     best_happiness= 0 
     for i in range(1, len(G.nodes)):
         local_best = {}
-        for j in range(0, 200):
+        j = 1
+        valid = 0 
+        while j <= 300:
+            if (not valid) and (j>=50):
+                j = 300
             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
             # centroids = [G.nodes[j] for j in init_centroids]
-            classes = making_classes_happy(init_centroids, G)
+            classes = making_classes_happy(init_centroids, G, s/i)
             d = making_dic(classes)
             dic = convert_dictionary(d)
-            if is_valid_solution(dic, G, s, i):
+            if (dic != {}) and is_valid_solution(dic, G, s, i):
+                valid = 1
                 local_best[calculate_happiness(dic, G)] = dic 
             if len(local_best)!=0:
                 local = max(local_best.keys())
@@ -100,36 +105,61 @@ def kcluster_happy(G, s):
                 else:
                    best_happiness = local
                    best = local_best[local]
+            j+=1
     h = calculate_happiness(best, G)
     print("Total Happiness: {}".format(calculate_happiness(best, G)))
     return best
         
 
 
-def making_classes_happy(centroids, G):
-    clas= [[c] for c in centroids] 
+def making_classes_happy(centroids, G, S_per_room):
+    clas= [[0, [c]] for c in centroids] 
     x = random.sample(range(0, len(list(G.nodes))), len(G.nodes))
     for node in x:
-        if not any([(node in already) for already in clas]):
+        if any([c[0] > S_per_room for c in clas]):
+            return []
+        if not any([(node in already[1]) for already in clas]):
             added_stress = []
             added_hs = []
+            added_happy = []
             for existing in range(len(centroids)):
                 total_hs = 0 
                 total_stress = 0
-                for stud in clas[existing]:
+                total_happy = 0
+                for stud in clas[existing][1]:
                     total_hs += G[stud][node]['happiness'] / G[stud][node]['stress']
                     total_stress +=  G[stud][node]['stress']
+                    total_happy +=  G[stud][node]['happiness']
                 added_stress.append(total_stress)
                 added_hs.append(total_hs)
-            clas[np.argmax(added_hs)].append(node)    
-            # if (np.argmin(added_stress) == np.argmax(added_hs)):
-            #     clas[np.argmax(added_stress)].append(node)    
-            # else: 
-            #     rando = [np.argmin(added_stress), np.argmax(added_hs)]
-            #     x = random.randint(0, 1)
-            #     clas[rando[x]].append(node)  
-    return clas
-    
+                added_happy.append(total_happy)
+            # clas[np.argmax(added_hs)].append(node)    
+            min_stress = np.argmin(added_stress)
+            max_hs = np.argmax(added_hs)
+            max_happy = np.argmax(added_happy)
+            if (min_stress == max_hs) or (added_stress[max_hs] > S_per_room) or ((added_stress[max_hs] + clas[max_hs][0]) > S_per_room):
+                clas[min_stress][1].append(node) 
+                clas[min_stress][0] += added_stress[min_stress]
+            # elif :
+            #     clas[min_stress][1].append(node) 
+            #     clas[min_stress][0] += added_stress[min_stress]
+            # elif :
+            #     clas[min_stress][1].append(node) 
+            #     clas[min_stress][0] += added_stress[min_stress]
+            else: 
+                if max_happy == min_stress:
+                    clas[min_stress][1].append(node) 
+                    clas[min_stress][0] += added_stress[min_stress]
+                elif max_happy == max_hs:
+                    clas[max_hs][1].append(node) 
+                    clas[max_hs][0] += added_stress[max_hs] 
+                else:
+                    rando = [min_stress, max_hs]
+                    x = random.randint(0, 1)
+                    clas[rando[x]][1].append(node)  
+                    clas[rando[x]][0] += added_stress[rando[x]] 
+    rv = [c[1] for c in clas]
+    return rv
 
 
 
