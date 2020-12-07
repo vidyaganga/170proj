@@ -6,6 +6,8 @@ import pandas as pd
 import numpy as np
 import random
 from math import factorial
+import os.path
+from os import path
 
 
 def comb(n, r):
@@ -93,7 +95,7 @@ def kcluster_beef(G, s):
         j = 0 
         valid = 0 
         total_combos = []
-        while j <= 400:
+        while j <= 600:
             # if (not valid) and j>=70:
             #     j=200
             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
@@ -180,29 +182,32 @@ def making_dic(biglist):
         dic[b]= biglist[b]
     return dic 
 
-def take_both(num):
-    G, s = read_input_file('inputs/medium-' + str(num) + '.in')
-    sree = kcluster_beef(G, s)
-    m = max([use_greedy_happystress(G, s) for i in range(100)], key=lambda x: calculate_happiness(x, G))
-    if calculate_happiness(sree, G) > calculate_happiness(m, G):
-        print(calculate_happiness(sree, G))
-        write_output_file(sree, 'outputs/medium-' + str(num) + '.out')
-    else:
-        print(calculate_happiness(m, G))
-        write_output_file(m, 'outputs/medium-' + str(num) + '.out')
+# def take_both(word, num):
+#     G, s = read_input_file('inputs/' + word + '-' + str(num) + '.in')
+#     sree = kcluster_beef(G, s)
+#     m = max([use_greedy_happystress(G, s) for i in range(100)], key=lambda x: calculate_happiness(x, G))
+#     if calculate_happiness(sree, G) > calculate_happiness(m, G):
+#         print(calculate_happiness(sree, G))
+#         write_output_file(sree, 'outputs/' + word + '-' + str(num) + '.out')
+#     else:
+#         print(calculate_happiness(m, G))
+#         write_output_file(m, 'outputs/' + word + '-' + str(num) + '.out')
 
-for i in [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 106, 107, 108, 112, 119, 124, 126, 130, 133, 134, 135, 139, 142, 143, 146, 147, 148, 149, 150, 152, 155, 158, 159, 163, 164, 167, 168, 170, 173, 179, 182, 183, 185, 186, 188, 189, 190, 191, 195, 197, 198, 200, 205, 210, 212, 214, 215, 216, 223, 224, 230, 232, 234, 236, 238, 239, 240]:
-    take_both(i)
+# for word in ['small', 'medium']:
+#     for i in range(1, 242):
+#         if path.exists("inputs/" + word + "-" + str(i) + '.in'):
+#             take_both(word, i)
 
 
-# def take_both(num):
-#     G, s = read_input_file('inputs/large-' + str(num) + '.in')
-#     m = max([use_greedy_happystress(G, s) for i in range(10)], key=lambda x: calculate_happiness(x, G))
-#     print(calculate_happiness(m, G))
-#     write_output_file(m, 'outputs/large-' + str(num) + '.out')
+def take_one(num):
+    G, s = read_input_file('inputs/large-' + str(num) + '.in')
+    m = max([use_greedy_happystress(G, s) for i in range(30)], key=lambda x: calculate_happiness(x, G))
+    print(calculate_happiness(m, G))
+    write_output_file(m, 'outputs/large-' + str(num) + '.out')
 
-# for i in range(236, 243):
-#     take_both(i)
+for i in range(1, 242):
+    if path.exists("inputs/large-" + str(i) + '.in'):
+        take_one(i)
 
 
 # for i in range(1, 243):
@@ -213,161 +218,6 @@ for i in [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 106, 107, 108, 
 #     print("Total Happiness: {}".format(x))
 
 #  x = max([(calculate_happiness(use_greedy_happystress(G, s), G)) for i in range(50)])
-
-# def greedy(G, s):
-#     sorted_happiness = [G[x][y] for ] 
-#     for i in range(len(G.nodes)):
-#         stress = s/i
-
-# def clearGraph(G, s):
-#     edges = list(G.edges)
-#     i = 0
-#     while i < len(edges):
-#         element = edges[i]
-#         if (element['stress'] > s):
-#             del element
-
-# def kcluster_stress(G, s):
-#     best = {}
-#     best_happiness= 0 
-#     for i in range(1, len(G.nodes)):
-#         local_best = {}
-#         j = 0 
-#         valid = 0 
-#         while j <= 400:
-#             if (not valid) and j>=70:
-#                 j=400
-#             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
-#             classes = making_classes_stress(init_centroids, G)
-#             d = making_dic(classes)
-#             dic = convert_dictionary(d)
-#             if is_valid_solution(dic, G, s, i):
-#                 valid = 1
-#                 local_best[calculate_happiness(dic, G)] = dic 
-#             if len(local_best)!=0:
-#                 valid = 1 
-#                 local = max(local_best.keys())
-#                 if len(best)!=0:
-#                     if best_happiness < local:
-#                         best_happiness = local 
-#                         best = local_best[local]
-#                 else:
-#                    best_happiness = local
-#                    best = local_best[local]
-#             j+=1
-#     h = calculate_happiness(best, G)
-#     print("Stress: Total Happiness: {}".format(calculate_happiness(best, G)))
-#     return best
-        
-
-# def making_classes_stress(centroids, G):
-#     clas= [[c] for c in centroids] 
-#     x = random.sample(range(0, len(list(G.nodes))), len(G.nodes))
-#     for node in x:
-#         if not any([(node in already) for already in clas]):
-#             added_stress = []
-#             for existing in range(len(centroids)):
-#                 total = 0 
-#                 for stud in clas[existing]:
-#                     total+= G[stud][node]['stress'] 
-#                 added_stress.append(total)
-#             clas[np.argmin(added_stress)].append(node)    
-#     return clas
-    
-
-# def kcluster_happy(G, s):
-#     best = {}
-#     best_happiness= 0 
-#     for i in range(1, len(G.nodes)):
-#         local_best = {}
-#         valid = 0
-#         j = 0 
-#         while j <= 400:
-#             if (not valid) and j>=70:
-#                 j==400
-#             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
-#             # centroids = [G.nodes[j] for j in init_centroids]
-#             classes = making_classes_stress(init_centroids, G)
-#             d = making_dic(classes)
-#             dic = convert_dictionary(d)
-#             if is_valid_solution(dic, G, s, i):
-#                 valid = 1
-#                 local_best[calculate_happiness(dic, G)] = dic 
-#             if len(local_best)!=0:
-#                 local = max(local_best.keys())
-#                 if len(best)!=0:
-#                     if best_happiness < local:
-#                         best_happiness = local 
-#                         best = local_best[local]
-#                 else:
-#                    best_happiness = local
-#                    best = local_best[local]
-#             j+=1
-#     h = calculate_happiness(best, G)
-#     print("Happy: Total Happiness: {}".format(calculate_happiness(best, G)))
-#     return best
-        
-
-# def making_classes_happy(centroids, G):
-#     clas= [[c] for c in centroids] 
-#     x = random.sample(range(0, len(list(G.nodes))), len(G.nodes))
-#     for node in x:
-#         if not any([(node in already) for already in clas]):
-#             added_stress = []
-#             for existing in range(len(centroids)):
-#                 total = 0 
-#                 for stud in clas[existing]:
-#                     total+= G[stud][node]['happiness'] 
-#                 added_stress.append(total)
-#             clas[np.argmax(added_stress)].append(node)    
-#     return clas
-
-
-# def kcluster_hs(G, s):
-#     best = {}
-#     best_happiness= 0 
-#     for i in range(1, len(G.nodes)):
-#         local_best = {}
-#         j = 0 
-#         valid = 0 
-#         while j <= 400:
-#             if (not valid) and j>=70:
-#                 j==400
-#             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
-#             classes = making_classes_stress(init_centroids, G)
-#             d = making_dic(classes)
-#             dic = convert_dictionary(d)
-#             if is_valid_solution(dic, G, s, i):
-#                 valid = 1
-#                 local_best[calculate_happiness(dic, G)] = dic 
-#             if len(local_best)!=0:
-#                 local = max(local_best.keys())
-#                 if len(best)!=0:
-#                     if best_happiness < local:
-#                         best_happiness = local 
-#                         best = local_best[local]
-#                 else:
-#                    best_happiness = local
-#                    best = local_best[local]
-#             j+=1
-#     h = calculate_happiness(best, G)
-#     print("Stress/Happy: Total Happiness: {}".format(calculate_happiness(best, G)))
-#     return best
-        
-
-# def making_classes_hs(centroids, G):
-#     clas= [[c] for c in centroids] 
-#     x = random.sample(range(0, len(list(G.nodes))), len(G.nodes))
-#     for node in x:
-#         if not any([(node in already) for already in clas]):
-#             added_stress = []
-#             for existing in range(len(centroids)):
-#                 total = 0 
-#                 for stud in clas[existing]:
-#                     total+= (G[stud][node]['happiness'] / G[stud][node]['stress'])
-#                 added_stress.append(total)
-#             clas[np.argmax(added_stress)].append(node)    
-#     return clas
 
 
 
