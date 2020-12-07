@@ -93,9 +93,9 @@ def kcluster_beef(G, s):
         j = 0 
         valid = 0 
         total_combos = []
-        while j <= 200:
-            if (not valid) and j>=70:
-                j=200
+        while j <= 1000:
+            # if (not valid) and j>=70:
+            #     j=200
             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
             if (len(total_combos) < comb(len(G.nodes), i)):
                 while (init_centroids in total_combos):
@@ -181,17 +181,18 @@ def making_dic(biglist):
     return dic 
 
 def take_both(num):
-    G, s = read_input_file('inputs/medium-' + str(i) + '.in')
+    G, s = read_input_file('inputs/small-' + str(num) + '.in')
     sree = kcluster_beef(G, s)
-    m = max([use_greedy_happystress(G, s) for i in range(50)], key=lambda x: calculate_happiness(x, G))
+    m = max([use_greedy_happystress(G, s) for i in range(150)], key=lambda x: calculate_happiness(x, G))
     if calculate_happiness(sree, G) > calculate_happiness(m, G):
         print(calculate_happiness(sree, G))
-        write_output_file(sree, 'outputs/medium-' + str(num) + '.out')
+        write_output_file(sree, 'outputs/small-' + str(num) + '.out')
     else:
         print(calculate_happiness(m, G))
-        write_output_file(m, 'outputs/medium-' + str(num) + '.out')
+        write_output_file(m, 'outputs/small-' + str(num) + '.out')
 
-for i in range(235, 243):
+# for i in range(235, 243):
+for i in ([107, 110, 119, 134, 144, 148, 150, 152, 155, 163, 165, 179, 186, 194, 196, 234, 240]):
     take_both(i)
 
 
