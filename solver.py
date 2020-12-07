@@ -25,6 +25,65 @@ def solve(G, s):
 
     # TODO: your code here!
     pass
+
+def use_greedy_happystress(G,s):
+    best = {}
+    i = 1
+    while i <= len(G.nodes):
+        G_cop = G.copy()
+        possible = greedy_happystress(G, G_cop, s, i)
+        if is_valid_solution(possible, G, s, i) and not list(G_cop.nodes):
+            if not best or calculate_happiness(best, G) < calculate_happiness(possible, G):
+                best = possible
+        i+=1
+    return best
+
+
+def greedy_happystress(G, G_cop, s, rooms):
+    dic = {}
+    current_room = 0
+    while G_cop.nodes and current_room < rooms:
+        dic[current_room] = room_maker(G, G_cop, s/rooms)
+        current_room += 1
+    return convert_dictionary(dic)
+
+def room_maker(G, G_copy,thresh):
+    room = []
+    room.append(list(G_copy.nodes)[random.randint(0, len(G_copy.nodes) - 1)])
+    G_copy.remove_node(room[0])
+    room_stress = 0
+    while room_stress <= thresh and list(G_copy.nodes):
+        next = max(list(G_copy.nodes), key=lambda x: happiness_over_stress(G,room, x))
+        room_stress1 = stress(G, room, next)
+        if room_stress + room_stress1 <= thresh:
+            room.append(next)
+            G_copy.remove_node(next)
+            room_stress += room_stress1
+        else:
+            return room
+    return room
+
+def happiness_over_stress(G, room, candidate):
+    happiness = 0
+    stress = 0
+    for kid in room:
+        happiness += G[kid][candidate]['happiness']
+        stress += G[kid][candidate]['stress']
+    if stress == 0:
+        return happiness/0.01
+    return happiness/stress
+
+def happiness(G, room, candidate):
+    happiness = 0
+    for kid in room:
+        happiness += G[kid][candidate]['happiness']
+    return happiness
+
+def stress(G, room, candidate):
+    stress = 0
+    for kid in room:
+        stress += G[kid][candidate]['stress']
+    return stress
     
 def kcluster_beef(G, s):
     best = {}
@@ -34,9 +93,9 @@ def kcluster_beef(G, s):
         j = 0 
         valid = 0 
         total_combos = []
-        while j <= 600:
+        while j <= 200:
             if (not valid) and j>=70:
-                j==600
+                j=200
             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
             if (len(total_combos) < comb(len(G.nodes), i)):
                 while (init_centroids in total_combos):
@@ -60,7 +119,6 @@ def kcluster_beef(G, s):
                         best = local_best[local]
             j+=1
     h = calculate_happiness(best, G)
-    print("Beef: Total Happiness: {}".format(calculate_happiness(best, G)))
     return best
 
 def making_classes_beef(centroids, G, S_per_room):
@@ -81,7 +139,10 @@ def making_classes_beef(centroids, G, S_per_room):
                 total_stress = 0
                 total_happy = 0
                 for stud in clasBeef[existing][1]:
-                    total_hs += G[stud][node]['happiness'] / G[stud][node]['stress']
+                    if not G[stud][node]['stress']:
+                        total_hs += G[stud][node]['happiness'] / 0.001
+                    else:
+                        total_hs += G[stud][node]['happiness'] / G[stud][node]['stress']
                     total_stress +=  G[stud][node]['stress']
                     total_happy +=  G[stud][node]['happiness']
                 added_stress.append(total_stress)
@@ -119,9 +180,39 @@ def making_dic(biglist):
         dic[b]= biglist[b]
     return dic 
 
-G, s = read_input_file('/Users/sreevidyaganga/Downloads/50 (1).in')
-x = kcluster_beef(G, s)
+# def take_both(num):
+#     G, s = read_input_file('inputs/small-' + str(i) + '.in')
+#     sree = kcluster_beef(G, s)
+#     m = max([use_greedy_happystress(G, s) for i in range(50)], key=lambda x: calculate_happiness(x, G))
+#     if calculate_happiness(sree, G) > calculate_happiness(m, G):
+#         print(calculate_happiness(sree, G))
+#         write_output_file(sree, 'outputs/small-' + str(num) + '.out')
+#     else:
+#         print(calculate_happiness(m, G))
+#         write_output_file(m, 'outputs/small-' + str(num) + '.out')
 
+# for i in range(1, 243):
+#     take_both(i)
+
+
+def take_both(num):
+    G, s = read_input_file('inputs/large-' + str(i) + '.in')
+    m = max([use_greedy_happystress(G, s) for i in range(50)], key=lambda x: calculate_happiness(x, G))
+    print(calculate_happiness(sree, G))
+    write_output_file(sree, 'outputs/large-' + str(num) + '.out')
+
+for i in range(1, 243):
+    take_both(i)
+
+
+# for i in range(1, 243):
+#     G, s = read_input_file('./inputs/small-' + str(i) + '.in')
+#     m = use_greedy_happystress(G,s)
+#     x = calculate_happiness(m, G)
+#     x = max([(calculate_happiness(use_greedy_happystress(G, s), G)) for i in range(50)])
+#     print("Total Happiness: {}".format(x))
+
+#  x = max([(calculate_happiness(use_greedy_happystress(G, s), G)) for i in range(50)])
 
 # def greedy(G, s):
 #     sorted_happiness = [G[x][y] for ] 
