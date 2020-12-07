@@ -196,12 +196,12 @@ def making_dic(biglist):
 
 
 def take_both(num):
-    G, s = read_input_file('inputs/large-' + str(i) + '.in')
-    m = max([use_greedy_happystress(G, s) for i in range(50)], key=lambda x: calculate_happiness(x, G))
-    print(calculate_happiness(sree, G))
-    write_output_file(sree, 'outputs/large-' + str(num) + '.out')
+    G, s = read_input_file('inputs/large-' + str(num) + '.in')
+    m = max([use_greedy_happystress(G, s) for i in range(10)], key=lambda x: calculate_happiness(x, G))
+    print(calculate_happiness(m, G))
+    write_output_file(m, 'outputs/large-' + str(num) + '.out')
 
-for i in range(1, 243):
+for i in range(236, 243):
     take_both(i)
 
 
