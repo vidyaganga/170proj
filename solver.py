@@ -95,9 +95,9 @@ def kcluster_beef(G, s):
         j = 0 
         valid = 0 
         total_combos = []
-        while j <= 900:
-            # if (not valid) and j>=`100:
-            #     j=800
+        while j <= 1000:
+            if (not valid) and j>=100:
+                j=1000
             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
             if (len(total_combos) < comb(len(G.nodes), i)):
                 while (init_centroids in total_combos):
@@ -194,15 +194,14 @@ def take_both(word, num):
         write_output_file(m, 'outputs/' + word + '-' + str(num) + '.out')
 
 for word in ['medium']:
-    take_both(word, 2)
-    # for i in range(1, 242):
-    #     if path.exists("inputs/" + word + "-" + str(i) + '.in'):
-    #         take_both(word, i)
+    for i in range(1, 242):
+        if path.exists("inputs/" + word + "-" + str(i) + '.in'):
+            take_both(word, i)
 
 
 def take_one(num):
     G, s = read_input_file('inputs/large-' + str(num) + '.in')
-    m = max([use_greedy_happystress(G, s) for i in range(30)], key=lambda x: calculate_happiness(x, G))
+    m = max([use_greedy_happystress(G, s) for i in range(40)], key=lambda x: calculate_happiness(x, G))
     print(calculate_happiness(m, G))
     write_output_file(m, 'outputs/large-' + str(num) + '.out')
 
