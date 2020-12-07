@@ -95,9 +95,9 @@ def kcluster_beef(G, s):
         j = 0 
         valid = 0 
         total_combos = []
-        while j <= 600:
-            # if (not valid) and j>=70:
-            #     j=200
+        while j <= 900:
+            # if (not valid) and j>=`100:
+            #     j=800
             init_centroids = random.sample(range(0, len(list(G.nodes))), i)
             if (len(total_combos) < comb(len(G.nodes), i)):
                 while (init_centroids in total_combos):
@@ -182,21 +182,22 @@ def making_dic(biglist):
         dic[b]= biglist[b]
     return dic 
 
-# def take_both(word, num):
-#     G, s = read_input_file('inputs/' + word + '-' + str(num) + '.in')
-#     sree = kcluster_beef(G, s)
-#     m = max([use_greedy_happystress(G, s) for i in range(100)], key=lambda x: calculate_happiness(x, G))
-#     if calculate_happiness(sree, G) > calculate_happiness(m, G):
-#         print(calculate_happiness(sree, G))
-#         write_output_file(sree, 'outputs/' + word + '-' + str(num) + '.out')
-#     else:
-#         print(calculate_happiness(m, G))
-#         write_output_file(m, 'outputs/' + word + '-' + str(num) + '.out')
+def take_both(word, num):
+    G, s = read_input_file('inputs/' + word + '-' + str(num) + '.in')
+    sree = kcluster_beef(G, s)
+    m = max([use_greedy_happystress(G, s) for i in range(100)], key=lambda x: calculate_happiness(x, G))
+    if calculate_happiness(sree, G) > calculate_happiness(m, G):
+        print(calculate_happiness(sree, G))
+        write_output_file(sree, 'outputs/' + word + '-' + str(num) + '.out')
+    else:
+        print(calculate_happiness(m, G))
+        write_output_file(m, 'outputs/' + word + '-' + str(num) + '.out')
 
-# for word in ['small', 'medium']:
-#     for i in range(1, 242):
-#         if path.exists("inputs/" + word + "-" + str(i) + '.in'):
-#             take_both(word, i)
+for word in ['medium']:
+    take_both(word, 2)
+    # for i in range(1, 242):
+    #     if path.exists("inputs/" + word + "-" + str(i) + '.in'):
+    #         take_both(word, i)
 
 
 def take_one(num):
